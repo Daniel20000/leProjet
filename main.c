@@ -16,6 +16,9 @@
 
 #include <detect_obstacle.h>
 
+messagebus_t bus;
+MUTEX_DECL(bus_lock);
+CONDVAR_DECL(bus_condvar);
 
 void SendUint8ToComputer(uint8_t* data, uint16_t size) 
 {
@@ -31,10 +34,19 @@ int main(void)
     halInit();
     chSysInit();
 
-    //Il faut qu'on initialise un mutexe pour pouvoir l'utiliser
-    //proximity_start();
-    //calibrate_ir();
+    messagebus_init(&bus, &bus_lock, &bus_condvar);
 
+    //Il faut qu'on initialise un mutexe pour pouvoir l'utiliser
+    proximity_start();
+    calibrate_ir();
+
+
+    //start IMU
+    imu_start();
+
+
+
+    usb_start();
 
     //inits the motors
 	motors_init();
@@ -53,6 +65,12 @@ int main(void)
 
     /* Infinite loop. */
     while (1) {
+
+    	int16_t a;
+    	a = get_acc_filtered(0, 20);
+
+    	chprintf((BaseSequentialStream *)&SDU1, a);
+
 
     	/* PARTIE GYROSCOPE
     	int j;
@@ -74,7 +92,7 @@ int main(void)
     	right_motor_set_speed(speedR);
     	left_motor_set_speed(speedL);
 
-
+    	//chprintf((BaseSequentialStream *)&SDU1, "Hello world");
 
     	//CODE POUR LE CAPTEUR DE POSITION QUI FAIT RECULER LE ROBOT POUR LE CONTOURNER
     	if(i>3 && i<10)  //si le capteur IR3 capte un objet alors les moteurs reculent et puis tourne sur eux meme et réavance pour éviter l'obstacle
@@ -92,7 +110,6 @@ int main(void)
     			}
     		}
 
-    	//clear_leds();
 
     	if(i>=12 && i<19)  //si le capteur IR3 capte un objet alors les moteurs reculent et puis tourne sur eux meme et réavance pour éviter l'obstacle
     	    		{
@@ -108,8 +125,6 @@ int main(void)
     	    				i = i+1;
     	    			}
     	    		}
-
-    	//clear_leds();
 
 
     	i = i+1;

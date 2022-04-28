@@ -1,6 +1,12 @@
 # Prerequisites
 *.d
 
+*build
+*.settings
+*.launch
+*.project
+*.cproject
+
 # Object files
 *.o
 *.ko

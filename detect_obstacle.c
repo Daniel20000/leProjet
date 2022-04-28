@@ -54,71 +54,46 @@ void backtracking(void){
 
 
 //Ce code fonctionne ilm faut mnt changer les noms des capteurs IR
-void led_set_if_obstacle(led_name_t led_number, int IR_1, int IR_3, int IR_5, int IR_7)  //si un capteur infrarouge de 1,3,5,7 capte un obstacle alors la led respective s'allume
+void led_set_if_obstacle(void)  //si un capteur infrarouge de 1,3,5,7 capte un obstacle alors la led respective s'allume
 {
-	switch(led_number)
+	while(get_prox(0) >= 100 || get_prox(7) >= 100)
 	{
-		case LED1:
-			if(IR_1 == 1)
-			{
-				set_led(LED1, 1);
-			} else
-			{
-				break;
-			}
-			break;
-		case LED3:
-			if(IR_3 == 1)
-			{
-				set_led(LED3, 1);
-			} else
-			{
-				break;
-			}
-			break;
-		case LED5:
-			if(IR_5 == 1)
-			{
-				set_led(LED5, 1);
-			} else
-			{
-				break;
-			}
-			break;
-		case LED7:
-			if(IR_7 == 1)
-			{
-				set_led(LED7, 1);
-			} else
-			{
-				break;
-			}
-			break;
-		default:
-			for(int i=0; i<4; i++)
-			{
-				clear_leds();
-			}
+		set_led(LED1, 1);
 	}
+	while(get_prox(2) >= 100)
+	{
+		set_led(LED3, 1);
+	}
+	while(get_prox(3) >= 100 || get_prox(4) >= 100)
+	{
+		set_led(LED5, 1);
+	}
+	while(get_prox(5) >= 100)
+	{
+		set_led(LED7, 1);
+	}
+	clear_leds();
 }
 
 
 
 
-void eviter_obstacle(int sped, int i)   //Attention speed doit etre negatif pour reculer
+void eviter_obstacle(void)   //Attention speed doit etre negatif pour reculer
 {
-	if(i > 3)  //si le capteur IR3 capte un objet alors les moteurs reculent et puis tourne sur eux meme et réavance pour éviter l'obstacle
+	if(get_prox(0)>=40)
 	{
-		while(i > 3)  // tant que le capteur capte l'objet il continue de reculer
+		if(get_prox(5)<=30)
 		{
-			right_motor_set_speed(sped);
-			left_motor_set_speed(sped);
+			turn_90_right();
+		}
+		if(get_prox(5)>=30)
+		{
+			go_straight_on();
 		}
 	}
-	i = i+1;
 }
 
-
+/*
 void detection_pente_forte(void)
 {
 	int j;
@@ -136,6 +111,18 @@ void detection_pente_forte(void)
 		j=j+1;
 	}
 }
+*/
 
+
+/*
+static THD_WORKING_AREA(waBlinker, 128);
+static THD_FUNCTION(Blinker, arg) {
+
+  while (true) {
+	led_set_if_obstacle(LED1, 1, 0, 0, 0);
+	chThdSleepMilliseconds(500);
+  }
+}
+*/
 
 

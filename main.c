@@ -40,16 +40,22 @@ int main(void)
 
     messagebus_init(&bus, &bus_lock, &bus_condvar);
 
-    //Il faut qu'on initialise un mutexe pour pouvoir l'utiliser
+    /*
+     * Initalisation Proximity Sensor
+     */
     proximity_start();
     calibrate_ir();
 
-    //start IMU
+    /*
+     * Initialisation IMU
+     */
     imu_start();
 
     usb_start();
 
-    //inits the motors
+    /*
+     * Initialisation motors
+     */
 	motors_init();
 
 
@@ -70,27 +76,6 @@ int main(void)
     			steep_slope_warning();
     			break;
     	}
-
-
-
-/*
-    	right_motor_set_speed(200);
-    	left_motor_set_speed(200);
-
-    	//a = get_acc(1);
-
-    	//chprintf((BaseSequentialStream *)&SDU1, "%d ", a);
-
-
-    	led_set_if_obstacle();
-
-    	if(get_prox(0)>=160 || get_prox(7)>=160)
-    	{
-    		right_motor_set_speed(0);
-    		left_motor_set_speed(0);
-    	}
-*/
-
 
     	//100Hz
     	//chThdSleepUntilWindowed(time, time + MS2ST(10));

@@ -118,7 +118,7 @@ void eviter_obstacle(int sped, int i)   //Attention speed doit etre negatif pour
 	i = i+1;
 }
 
-
+/*
 void detection_pente_forte(void)
 {
 	int j;
@@ -136,6 +136,18 @@ void detection_pente_forte(void)
 		j=j+1;
 	}
 }
+*/
 
+
+/*
+static THD_WORKING_AREA(waBlinker, 128);
+static THD_FUNCTION(Blinker, arg) {
+
+  while (true) {
+	led_set_if_obstacle(LED1, 1, 0, 0, 0);
+	chThdSleepMilliseconds(500);
+  }
+}
+*/
 
 

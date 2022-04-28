@@ -17,6 +17,7 @@
 
 #include <detect_obstacle.h>
 
+
 messagebus_t bus;
 MUTEX_DECL(bus_lock);
 CONDVAR_DECL(bus_condvar);
@@ -27,6 +28,8 @@ void SendUint8ToComputer(uint8_t* data, uint16_t size)
 	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)&size, sizeof(uint16_t));
 	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)data, size);
 }
+
+int state_of_robot=0;
 
 
 int main(void)
@@ -41,11 +44,8 @@ int main(void)
     proximity_start();
     calibrate_ir();
 
-
     //start IMU
     imu_start();
-
-
 
     usb_start();
 
@@ -53,30 +53,43 @@ int main(void)
 	motors_init();
 
 
-
-
-	//float time;
-	int speedR=200;
-	int speedL=200;
-	int i=0;
-	int b;
-
-
-
     /* Infinite loop. */
     while (1) {
 
-    	right_motor_set_speed(speedR);
-    	left_motor_set_speed(speedL);
+    	switch(state_of_robot){
+    		case CRUISE_STATE:
+    			move_forward();
+    			break;
+    		case BYPASS_OBSTACLE:
+    			obstacle_bypassing();
+    			break;
+    		case BYPASS_U_TURN:
+    			u_turn_bypassing();
+    			break;
+    		case CAUTION_STEEP_SLOPE:
+    			steep_slope_warning();
+    			break;
+    	}
 
 
 
-    	//chprintf((BaseSequentialStream *)&SDU1, "%d ", b);
+/*
+    	right_motor_set_speed(200);
+    	left_motor_set_speed(200);
+
+    	//a = get_acc(1);
+
+    	//chprintf((BaseSequentialStream *)&SDU1, "%d ", a);
 
 
     	led_set_if_obstacle();
 
-
+    	if(get_prox(0)>=160 || get_prox(7)>=160)
+    	{
+    		right_motor_set_speed(0);
+    		left_motor_set_speed(0);
+    	}
+*/
 
 
     	//100Hz
@@ -92,5 +105,4 @@ void __stack_chk_fail(void)
 {
     chSysHalt("Stack smashing detected");
 }
-
 

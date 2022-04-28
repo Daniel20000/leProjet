@@ -9,9 +9,10 @@ extern "C" {
 #include "msgbus/messagebus.h"
 #include "parameter/parameter.h"
 
-
-//constants for the differents parts of the project
-#define IMAGE_BUFFER_SIZE		640
+#define CRUISE_STATE			0
+#define BYPASS_OBSTACLE			1
+#define BYPASS_U_TURN			2
+#define CAUTION_STEEP_SLOPE		3
 
 /** Robot wide IPC bus. */
 extern messagebus_t bus;

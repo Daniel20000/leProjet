@@ -13,16 +13,37 @@
 #include <leds.h>
 #include <sensors/proximity.h>
 #include <sensors/imu.h>
-
 #include <pi_regulator.h>
 
-//liste de tous nos define
-#define CRUISING_SPEED         1000
-#define STOP_SPEED             0
-#define TURN_SPEED			   500
 
+//definition of the usual speed
+#define CRUISING_SPEED          200
+#define STOP_SPEED              0
+#define TURN_SPEED			    300
 
+//definition of the IR sensors
+#define IR1         		 	get_prox(0)
+#define IR2           			get_prox(1)
+#define IR3			   			get_prox(2)
+#define IR4         		 	get_prox(3)
+#define IR5           			get_prox(4)
+#define IR6			   			get_prox(5)
+#define IR7         		 	get_prox(6)
+#define IR8           			get_prox(7)
 
+//definition states of LED
+#define OFF						0
+#define ON						1
+
+//definition acceleration axis
+#define X						get_acc(0)
+#define Y						get_acc(1)
+#define Z						get_acc(2)	  		//normalement pas utilisé
+
+//definition of steep slopes
+#define SLOPE_MAX				1000
+
+extern int state_of_robot;
 /*
  * Differentes fonctions qui permettent au robot de se déplacer
  */
@@ -50,25 +71,65 @@ void stop_robot(void){
 void backtracking(void){
 	right_motor_set_speed(- CRUISING_SPEED);
 	left_motor_set_speed(- CRUISING_SPEED);
+	toggle_rgb_led(LED4, GREEN_LED, RGB_MAX_INTENSITY);
+	toggle_rgb_led(LED6, GREEN_LED, RGB_MAX_INTENSITY);
 }
 
 
-//Ce code fonctionne ilm faut mnt changer les noms des capteurs IR
+void move_forward(void){
+	go_straight_on();
+	if(IR1 >= 160 || IR8 >= 160){
+		set_led(LED1, ON);
+		state_of_robot = BYPASS_OBSTACLE;
+	}
+	if((IR1 >= 160 || IR8 >= 160) && (IR6 >= 160) && (IR3 >= 160)){
+		set_led(LED1,ON);
+		set_led(LED3,ON);
+		set_led(LED7,ON);
+		state_of_robot = BYPASS_U_TURN;
+	}
+	if(X > SLOPE_MAX || X < -SLOPE_MAX){
+		state_of_robot = CAUTION_STEEP_SLOPE;
+	}
+}
+
+
+void obstacle_bypassing(void){
+	stop_robot();
+}
+
+void u_turn_bypassing(void){
+	backtracking();
+}
+
+void steep_slope_warning(void){
+	set_front_led(ON);
+}
+
+
+
+
+
+
+
+
+
+
 void led_set_if_obstacle(void)  //si un capteur infrarouge de 1,3,5,7 capte un obstacle alors la led respective s'allume
 {
-	while(get_prox(0) >= 100 || get_prox(7) >= 100)
+	if(get_prox(0) >= 100 || get_prox(7) >= 100)
 	{
 		set_led(LED1, 1);
 	}
-	while(get_prox(2) >= 100)
+	if(get_prox(2) >= 100)
 	{
 		set_led(LED3, 1);
 	}
-	while(get_prox(3) >= 100 || get_prox(4) >= 100)
+	if(get_prox(3) >= 100 || get_prox(4) >= 100)
 	{
 		set_led(LED5, 1);
 	}
-	while(get_prox(5) >= 100)
+	if(get_prox(5) >= 100)
 	{
 		set_led(LED7, 1);
 	}
@@ -76,9 +137,7 @@ void led_set_if_obstacle(void)  //si un capteur infrarouge de 1,3,5,7 capte un o
 }
 
 
-
-
-void eviter_obstacle(void)   //Attention speed doit etre negatif pour reculer
+void eviter_obstacle(void)
 {
 	if(get_prox(0)>=40)
 	{
@@ -93,25 +152,22 @@ void eviter_obstacle(void)   //Attention speed doit etre negatif pour reculer
 	}
 }
 
+
 /*
 void detection_pente_forte(void)
-{
-	int j;
-	int16_t res;
-	while(j!=3)
-	{
-		res = get_gyro(j);
-			if(res >= 90)
-			{
-				toggle_rgb_led(LED2, GREEN_LED, RGB_MAX_INTENSITY);
-				toggle_rgb_led(LED4, GREEN_LED, RGB_MAX_INTENSITY);
-				toggle_rgb_led(LED6, GREEN_LED, RGB_MAX_INTENSITY);
-				toggle_rgb_led(LED8, GREEN_LED, RGB_MAX_INTENSITY);
-			}
-		j=j+1;
-	}
-}
 */
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
@@ -124,5 +180,3 @@ static THD_FUNCTION(Blinker, arg) {
   }
 }
 */
-
-

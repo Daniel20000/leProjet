@@ -10,9 +10,10 @@ extern "C" {
 #include "parameter/parameter.h"
 
 #define CRUISE_STATE			0
-#define BYPASS_OBSTACLE			1
-#define BYPASS_U_TURN			2
-#define CAUTION_STEEP_SLOPE		3
+#define BYPASS_OBSTACLE_1		1
+#define BYPASS_OBSTACLE_2		2
+#define BYPASS_U_TURN			3
+#define CAUTION_STEEP_SLOPE		4
 
 /** Robot wide IPC bus. */
 extern messagebus_t bus;

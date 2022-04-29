@@ -66,9 +66,12 @@ int main(void)
     		case CRUISE_STATE:
     			move_forward();
     			break;
-    		case BYPASS_OBSTACLE:
-    			obstacle_bypassing();
+    		case BYPASS_OBSTACLE_1:
+    			obstacle_1_bypassing();
     			break;
+    		case BYPASS_OBSTACLE_2:
+    		    obstacle_2_bypassing();
+    		    break;
     		case BYPASS_U_TURN:
     			u_turn_bypassing();
     			break;

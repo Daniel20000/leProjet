@@ -17,6 +17,7 @@
 
 #include <detect_obstacle.h>
 
+
 messagebus_t bus;
 MUTEX_DECL(bus_lock);
 CONDVAR_DECL(bus_condvar);
@@ -28,6 +29,8 @@ void SendUint8ToComputer(uint8_t* data, uint16_t size)
 	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)data, size);
 }
 
+int state_of_robot=0;
+
 
 int main(void)
 {
@@ -37,47 +40,45 @@ int main(void)
 
     messagebus_init(&bus, &bus_lock, &bus_condvar);
 
-    //Il faut qu'on initialise un mutexe pour pouvoir l'utiliser
+    /*
+     * Initalisation Proximity Sensor
+     */
     proximity_start();
     calibrate_ir();
 
-
-    //start IMU
+    /*
+     * Initialisation IMU
+     */
     imu_start();
-
-
 
     usb_start();
 
-    //inits the motors
+    /*
+     * Initialisation motors
+     */
 	motors_init();
-
-
-
-
-	//float time;
-	int speedR=200;
-	int speedL=200;
-	int i=0;
-	int b;
-
 
 
     /* Infinite loop. */
     while (1) {
 
-    	right_motor_set_speed(speedR);
-    	left_motor_set_speed(speedL);
-
-
-
-    	//chprintf((BaseSequentialStream *)&SDU1, "%d ", b);
-
-
-    	led_set_if_obstacle();
-
-
-
+    	switch(state_of_robot){
+    		case CRUISE_STATE:
+    			move_forward();
+    			break;
+    		case BYPASS_OBSTACLE_1:
+    			obstacle_1_bypassing();
+    			break;
+    		case BYPASS_OBSTACLE_2:
+    		    obstacle_2_bypassing();
+    		    break;
+    		case BYPASS_U_TURN:
+    			u_turn_bypassing();
+    			break;
+    		case CAUTION_STEEP_SLOPE:
+    			steep_slope_warning();
+    			break;
+    	}
 
     	//100Hz
     	//chThdSleepUntilWindowed(time, time + MS2ST(10));
@@ -92,5 +93,4 @@ void __stack_chk_fail(void)
 {
     chSysHalt("Stack smashing detected");
 }
-
 

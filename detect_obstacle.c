@@ -41,7 +41,7 @@
 #define Z						get_acc(2)	  		//normalement pas utilisé
 
 //definition of threshhold
-#define SLOPE_THRESHOLD				2500
+#define SLOPE_THRESHOLD				6000
 #define PROX_THRESHOLD				70
 #define PROX_UTURN_TRESH			100
 #define TIME_TO_TURN				1075
@@ -91,31 +91,42 @@ void backtracking(void){
 
 void move_forward(void){
 	go_straight_on();
-	if((IR1 >=  PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD) && (IR2 <= 80) && (IR6 <= 40)){
+
+	if((IR1 >=  PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD) && (IR2 <= PROX_UTURN_TRESH)
+			&& (IR6 <= PROX_UTURN_TRESH)){
 		set_led(LED1, ON);
-		state_of_robot = BYPASS_OBSTACLE_1;
+		state_of_robot = BYPASS_OBSTACLE_WALL;
 	}
-	if((IR1 >=  PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD) && (IR2 >= 80) && (IR6 <= 40)){
+
+	if((IR1 >=  PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD) && (IR2 >= PROX_UTURN_TRESH)
+			&& (IR6 <= PROX_UTURN_TRESH)){
 		set_led(LED1, ON);
 		set_led(LED3, ON);
-		state_of_robot = BYPASS_OBSTACLE_2;
+		state_of_robot = BYPASS_OBSTACLE_ANGLE_RIGHT;
 	}
 
+	if((IR1 >=  PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD) && (IR7 >= PROX_UTURN_TRESH)
+				&& (IR3 <= PROX_UTURN_TRESH)){
+			set_led(LED1, ON);
+			set_led(LED7, ON);
+			state_of_robot = BYPASS_OBSTACLE_ANGLE_LEFT;
+		}
 
-	if((IR1 >= PROX_UTURN_TRESH || IR8 >= PROX_UTURN_TRESH) && (IR6 >= PROX_UTURN_TRESH) && (IR3 >= PROX_UTURN_TRESH)){
+	if((IR1 >= PROX_UTURN_TRESH || IR8 >= PROX_UTURN_TRESH) && (IR6 >= PROX_UTURN_TRESH)
+			&& (IR3 >= PROX_UTURN_TRESH)){
 		set_led(LED1,ON);
 		set_led(LED3,ON);
 		set_led(LED7,ON);
 		state_of_robot = BYPASS_U_TURN;
 	}
 
-	/*if(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD){
+	if(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){
 		state_of_robot = CAUTION_STEEP_SLOPE;
-	}*/
+	}
 }
 
 
-void obstacle_1_bypassing(void){
+void wall_bypassing(void){
 	turn_90_right();
 	clear_leds();
 	while(IR6 >= PROX_THRESHOLD){
@@ -126,7 +137,7 @@ void obstacle_1_bypassing(void){
 	state_of_robot = CRUISE_STATE;
 }
 
-void obstacle_2_bypassing(void){
+void angle_right_bypassing(void){
 	turn_90_left();
 	clear_leds();
 	go_straight_on();
@@ -134,6 +145,18 @@ void obstacle_2_bypassing(void){
 		go_straight_on();
 	}
 	turn_90_right();
+	go_straight_on();
+	state_of_robot = CRUISE_STATE;
+}
+
+void angle_left_bypassing(void){
+	turn_90_right();
+	clear_leds();
+	go_straight_on();
+	while(IR6 >= 100){
+		go_straight_on();
+	}
+	turn_90_left();
 	go_straight_on();
 	state_of_robot = CRUISE_STATE;
 }
@@ -150,8 +173,12 @@ void u_turn_bypassing(void){
 	state_of_robot = CRUISE_STATE;
 }
 
+
 void steep_slope_warning(void){
-	set_front_led(ON);
+	set_body_led(ON);
+	chThdSleepMilliseconds(1000);
+	set_body_led(OFF);
+	state_of_robot = CRUISE_STATE;
 }
 
 

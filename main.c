@@ -50,6 +50,7 @@ int main(void)
      * Initialisation IMU
      */
     imu_start();
+    calibrate_acc();
 
     usb_start();
 
@@ -66,18 +67,23 @@ int main(void)
     		case CRUISE_STATE:
     			move_forward();
     			break;
-    		case BYPASS_OBSTACLE_1:
-    			obstacle_1_bypassing();
+    		case BYPASS_OBSTACLE_WALL:
+    			wall_bypassing();
     			break;
-    		case BYPASS_OBSTACLE_2:
-    		    obstacle_2_bypassing();
+    		case BYPASS_OBSTACLE_ANGLE_RIGHT:
+    		    angle_right_bypassing();
+    		    break;
+    		case BYPASS_OBSTACLE_ANGLE_LEFT:
+    		    angle_left_bypassing();
     		    break;
     		case BYPASS_U_TURN:
     			u_turn_bypassing();
     			break;
+
     		case CAUTION_STEEP_SLOPE:
     			steep_slope_warning();
     			break;
+
     	}
 
     	//100Hz

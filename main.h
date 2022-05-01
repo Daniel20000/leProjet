@@ -9,11 +9,12 @@ extern "C" {
 #include "msgbus/messagebus.h"
 #include "parameter/parameter.h"
 
-#define CRUISE_STATE			0
-#define BYPASS_OBSTACLE_1		1
-#define BYPASS_OBSTACLE_2		2
-#define BYPASS_U_TURN			3
-#define CAUTION_STEEP_SLOPE		4
+#define CRUISE_STATE					0
+#define BYPASS_OBSTACLE_WALL			1
+#define BYPASS_OBSTACLE_ANGLE_RIGHT		2
+#define BYPASS_OBSTACLE_ANGLE_LEFT		3
+#define BYPASS_U_TURN					4
+#define CAUTION_STEEP_SLOPE				5
 
 /** Robot wide IPC bus. */
 extern messagebus_t bus;

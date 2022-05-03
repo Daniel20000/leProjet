@@ -1,18 +1,50 @@
-static THD_WORKING_AREA(waBlinker, 128);
-static THD_FUNCTION(Blinker, arg) {
- 
-  while (true) {
-	led_set_if_obstacle(LED7, 0, 0, 0, 1);
-	chThdSleepMilliseconds(500);
-  }
+static THD_WORKING_AREA(waObstacle, 128);
+static THD_FUNCTION(Obstacle, arg) {
+
+    chRegSetThreadName(__FUNCTION__);
+    (void)arg;
+
+    
+
+    while(1){
+        switch(state_of_robot){
+            case CRUISE_STATE:
+                move_forward();
+                break;
+            case BYPASS_OBSTACLE_1:
+                obstacle_1_bypassing();
+                break;
+            case BYPASS_OBSTACLE_2:
+                obstacle_2_bypassing();
+                break;
+            case BYPASS_U_TURN:
+                u_turn_bypassing();
+                break;
+
+            chThdSleepMilliseconds(500);
+        }
+    }
 }
 
-/*
- *  Starts the thread Blinker in the main.c 
- */
-void blinker_start(void){
-	chThdCreateStatic(waBlinker, sizeof(waBlinker), NORMALPRIO, Blinker, NULL);
+static THD_WORKING_AREA(waPente, 128);
+static THD_FUNCTION(Pente, arg) {
+
+    chRegSetThreadName(__FUNCTION__);
+    (void)arg;
+
+    while(1){
+        
+                case CAUTION_STEEP_SLOPE:
+                steep_slope_warning();
+                break;
+
+        chThdSleepMilliseconds(500);
+
+    
+    }
 }
 
-//appel dans le main:
-blinker_start();
+
+//Dans le main() avant la boucle while(1)
+chThdCreateStatic(waObstacle, sizeof(waObstacle), NORMALPRIO, Obstacle, NULL);
+chThdCreateStatic(waPente, sizeof(waPente), NORMALPRIO, Pente, NULL);

@@ -16,6 +16,10 @@ extern "C" {
 #define BYPASS_U_TURN					4
 #define CAUTION_STEEP_SLOPE				5
 
+void set_robot_state(uint8_t new_state);
+
+
+
 /** Robot wide IPC bus. */
 extern messagebus_t bus;
 
@@ -28,3 +32,4 @@ void SendUint8ToComputer(uint8_t* data, uint16_t size);
 #endif
 
 #endif
+

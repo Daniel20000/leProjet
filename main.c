@@ -5,17 +5,22 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "memory_protection.h"
 #include <usbcfg.h>
 #include <main.h>
 #include <motors.h>
-#include <camera/po8030.h>
 #include <chprintf.h>
 #include <leds.h>
 #include <sensors/imu.h>
 #include <sensors/proximity.h>
 
 #include <detect_obstacle.h>
+
+
+static uint8_t state_of_robot = 0;
+
+void set_robot_state(uint8_t new_state){
+	state_of_robot = new_state;
+}
 
 
 messagebus_t bus;
@@ -28,8 +33,6 @@ void SendUint8ToComputer(uint8_t* data, uint16_t size)
 	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)&size, sizeof(uint16_t));
 	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)data, size);
 }
-
-int state_of_robot=0;
 
 
 int main(void)
@@ -59,7 +62,6 @@ int main(void)
      */
 	motors_init();
 
-
     /* Infinite loop. */
     while (1) {
 
@@ -83,12 +85,8 @@ int main(void)
     		case CAUTION_STEEP_SLOPE:
     			steep_slope_warning();
     			break;
-
     	}
-
-    	//100Hz
-    	//chThdSleepUntilWindowed(time, time + MS2ST(10));
-        chThdSleepMilliseconds(1000); //waits 1 second
+        chThdSleepMilliseconds(500); //waits 0.5 second
     }
 }
 
@@ -99,4 +97,3 @@ void __stack_chk_fail(void)
 {
     chSysHalt("Stack smashing detected");
 }
-

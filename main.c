@@ -57,6 +57,8 @@ int main(void)
 
     usb_start();
 
+    spi_comm_start();  //pour rgb led
+
     /*
      * Initialisation motors
      */
@@ -64,6 +66,9 @@ int main(void)
 
     /* Infinite loop. */
     while (1) {
+
+
+    	//chprintf((BaseSequentialStream *)&SDU1, "%d ", get_prox(1));
 
     	switch(state_of_robot){
     		case CRUISE_STATE:
@@ -86,9 +91,11 @@ int main(void)
     			steep_slope_warning();
     			break;
     	}
-        chThdSleepMilliseconds(500); //waits 0.5 second
+
+        chThdSleepMilliseconds(200); //waits 0.5 second
     }
 }
+
 
 #define STACK_CHK_GUARD 0xe2dee396
 uintptr_t __stack_chk_guard = STACK_CHK_GUARD;
@@ -97,3 +104,4 @@ void __stack_chk_fail(void)
 {
     chSysHalt("Stack smashing detected");
 }
+

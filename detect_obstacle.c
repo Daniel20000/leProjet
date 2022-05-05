@@ -38,11 +38,11 @@
 #define Y						get_acc(1)
 
 //definition of threshhold
-#define SLOPE_THRESHOLD				6000
-#define PROX_THRESHOLD				70
+#define SLOPE_THRESHOLD				4200
+#define PROX_THRESHOLD				100
 #define PROX_UTURN_TRESH			100
 #define TIME_TO_TURN				1075
-#define TIME_MARGIN					150
+#define TIME_MARGIN					250
 
 
 
@@ -80,34 +80,66 @@ void backtracking(void){
 
 
 /*
+ * Definition fonction toggle led
+ */
+
+void toggle_led2(void){
+	set_rgb_led(LED2, RGB_MAX_INTENSITY, RGB_MAX_INTENSITY, OFF);
+	chThdSleepMilliseconds(500); //waits 1 second
+	set_rgb_led(LED2, OFF, OFF, OFF);
+	chThdSleepMilliseconds(500);
+}
+
+void toggle_led4(void){
+	set_rgb_led(LED4, RGB_MAX_INTENSITY, RGB_MAX_INTENSITY, OFF);
+	chThdSleepMilliseconds(500); //waits 1 second
+	set_rgb_led(LED4, OFF, OFF, OFF);
+	chThdSleepMilliseconds(500);
+}
+
+void toggle_led6(void){
+	set_rgb_led(LED6, RGB_MAX_INTENSITY, RGB_MAX_INTENSITY, OFF);
+	chThdSleepMilliseconds(500); //waits 1 second
+	set_rgb_led(LED6, OFF, OFF, OFF);
+	chThdSleepMilliseconds(500);
+}
+
+void toggle_led8(void){
+	set_rgb_led(LED8, RGB_MAX_INTENSITY, RGB_MAX_INTENSITY, OFF);
+	chThdSleepMilliseconds(500); //waits 1 second
+	set_rgb_led(LED8, OFF, OFF, OFF);
+	chThdSleepMilliseconds(500);
+}
+
+/*
  * Definition des fonctions principales
  */
 
 void move_forward(void){
 	go_straight_on();
 
-	if((IR1 >=  PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD) && (IR2 <= PROX_UTURN_TRESH)
-			&& (IR6 <= PROX_UTURN_TRESH)){
+	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 <= 90)
+			&& (IR7 <= 90) && (IR3 <= 90) && (IR6 <= 90)){
 		set_led(LED1, ON);
 		set_robot_state(BYPASS_OBSTACLE_WALL);
 	}
 
-	if((IR1 >=  PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD) && (IR2 >= PROX_UTURN_TRESH)
-			&& (IR6 <= PROX_UTURN_TRESH)){
+	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 >= 120)
+			&& (IR7 <= 120) && (IR3 >= 100) && (IR6 <= 100)){
 		set_led(LED1, ON);
 		set_led(LED3, ON);
 		set_robot_state(BYPASS_OBSTACLE_ANGLE_RIGHT);
 	}
 
-	if((IR1 >=  PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD) && (IR7 >= PROX_UTURN_TRESH)
-				&& (IR3 <= PROX_UTURN_TRESH)){
+	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 <= 90)
+			&& (IR7 >= 90) && (IR3 <= 90) && (IR6 >= 90)){
 			set_led(LED1, ON);
 			set_led(LED7, ON);
 			set_robot_state(BYPASS_OBSTACLE_ANGLE_LEFT);
 		}
 
-	if((IR1 >= PROX_UTURN_TRESH || IR8 >= PROX_UTURN_TRESH) && (IR6 >= PROX_UTURN_TRESH)
-			&& (IR3 >= PROX_UTURN_TRESH)){
+	if(((IR1 >= PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD)) && (IR2 >= 90)
+			&& (IR7 >= 90) && (IR3 >= 90) && (IR6 >= 90)){
 		set_led(LED1,ON);
 		set_led(LED3,ON);
 		set_led(LED7,ON);
@@ -126,6 +158,7 @@ void wall_bypassing(void){
 	while(IR6 >= PROX_THRESHOLD){
 		go_straight_on();
 	}
+	chThdSleepMilliseconds(TIME_MARGIN);
 	turn_90_left();
 	go_straight_on();
 	set_robot_state(CRUISE_STATE);
@@ -138,6 +171,7 @@ void angle_right_bypassing(void){
 	while(IR3 >= 100){
 		go_straight_on();
 	}
+	chThdSleepMilliseconds(TIME_MARGIN);
 	turn_90_right();
 	go_straight_on();
 	set_robot_state(CRUISE_STATE);
@@ -150,13 +184,14 @@ void angle_left_bypassing(void){
 	while(IR6 >= 100){
 		go_straight_on();
 	}
+	chThdSleepMilliseconds(TIME_MARGIN);
 	turn_90_left();
 	go_straight_on();
 	set_robot_state(CRUISE_STATE);
 }
 
 void u_turn_bypassing(void){
-	while((IR1 >= PROX_THRESHOLD || IR8 >= PROX_THRESHOLD) && (IR6 >= PROX_THRESHOLD) && (IR3 >= PROX_THRESHOLD)){
+	while((IR2 >= 57) && (IR7 >= 57)){
 		clear_leds();
 		set_front_led(ON);
 		backtracking();
@@ -169,15 +204,29 @@ void u_turn_bypassing(void){
 
 
 void steep_slope_warning(void){
-	set_body_led(ON);
+	//set_body_led(ON);
 	while(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){
 		stop_robot();
+		toggle_led2();
+		toggle_led4();
+		toggle_led6();
+		toggle_led8();
 	}
 	//chThdSleepMilliseconds(1000);
-	set_body_led(OFF);
+	//set_body_led(OFF);
+	set_rgb_led(LED2, OFF, OFF, OFF);
 	set_robot_state(CRUISE_STATE);
 }
 
 
 //chprintf((BaseSequentialStream *)&SDU1, "%d ", IR1);
+
+
+
+
+
+
+
+
+
 

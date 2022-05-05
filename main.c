@@ -5,17 +5,22 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "memory_protection.h"
 #include <usbcfg.h>
 #include <main.h>
 #include <motors.h>
-#include <camera/po8030.h>
 #include <chprintf.h>
 #include <leds.h>
 #include <sensors/imu.h>
 #include <sensors/proximity.h>
 
 #include <detect_obstacle.h>
+
+
+static uint8_t state_of_robot = 0;
+
+void set_robot_state(uint8_t new_state){
+	state_of_robot = new_state;
+}
 
 
 messagebus_t bus;
@@ -28,8 +33,6 @@ void SendUint8ToComputer(uint8_t* data, uint16_t size)
 	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)&size, sizeof(uint16_t));
 	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)data, size);
 }
-
-int state_of_robot=0;
 
 
 int main(void)
@@ -50,41 +53,49 @@ int main(void)
      * Initialisation IMU
      */
     imu_start();
+    calibrate_acc();
 
     usb_start();
+
+    spi_comm_start();  //pour rgb led
 
     /*
      * Initialisation motors
      */
 	motors_init();
 
-
     /* Infinite loop. */
     while (1) {
+
+
+    	//chprintf((BaseSequentialStream *)&SDU1, "%d ", get_prox(1));
 
     	switch(state_of_robot){
     		case CRUISE_STATE:
     			move_forward();
     			break;
-    		case BYPASS_OBSTACLE_1:
-    			obstacle_1_bypassing();
+    		case BYPASS_OBSTACLE_WALL:
+    			wall_bypassing();
     			break;
-    		case BYPASS_OBSTACLE_2:
-    		    obstacle_2_bypassing();
+    		case BYPASS_OBSTACLE_ANGLE_RIGHT:
+    		    angle_right_bypassing();
+    		    break;
+    		case BYPASS_OBSTACLE_ANGLE_LEFT:
+    		    angle_left_bypassing();
     		    break;
     		case BYPASS_U_TURN:
     			u_turn_bypassing();
     			break;
+
     		case CAUTION_STEEP_SLOPE:
     			steep_slope_warning();
     			break;
     	}
 
-    	//100Hz
-    	//chThdSleepUntilWindowed(time, time + MS2ST(10));
-        chThdSleepMilliseconds(1000); //waits 1 second
+        chThdSleepMilliseconds(200); //waits 0.5 second
     }
 }
+
 
 #define STACK_CHK_GUARD 0xe2dee396
 uintptr_t __stack_chk_guard = STACK_CHK_GUARD;

@@ -83,32 +83,11 @@ void backtracking(void){
  * Definition fonction toggle led
  */
 
-void toggle_led2(void){
-	set_rgb_led(LED2, RGB_MAX_INTENSITY, RGB_MAX_INTENSITY, OFF);
-	chThdSleepMilliseconds(500); //waits 1 second
+void clear_rgb_led(void){
 	set_rgb_led(LED2, OFF, OFF, OFF);
-	chThdSleepMilliseconds(500);
-}
-
-void toggle_led4(void){
-	set_rgb_led(LED4, RGB_MAX_INTENSITY, RGB_MAX_INTENSITY, OFF);
-	chThdSleepMilliseconds(500); //waits 1 second
 	set_rgb_led(LED4, OFF, OFF, OFF);
-	chThdSleepMilliseconds(500);
-}
-
-void toggle_led6(void){
-	set_rgb_led(LED6, RGB_MAX_INTENSITY, RGB_MAX_INTENSITY, OFF);
-	chThdSleepMilliseconds(500); //waits 1 second
 	set_rgb_led(LED6, OFF, OFF, OFF);
-	chThdSleepMilliseconds(500);
-}
-
-void toggle_led8(void){
-	set_rgb_led(LED8, RGB_MAX_INTENSITY, RGB_MAX_INTENSITY, OFF);
-	chThdSleepMilliseconds(500); //waits 1 second
 	set_rgb_led(LED8, OFF, OFF, OFF);
-	chThdSleepMilliseconds(500);
 }
 
 /*
@@ -204,17 +183,14 @@ void u_turn_bypassing(void){
 
 
 void steep_slope_warning(void){
-	//set_body_led(ON);
 	while(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){
+		toggle_rgb_led(LED2, BLUE_LED, RGB_MAX_INTENSITY);
+		toggle_rgb_led(LED4, BLUE_LED, RGB_MAX_INTENSITY);
+		toggle_rgb_led(LED6, BLUE_LED, RGB_MAX_INTENSITY);
+		toggle_rgb_led(LED8, BLUE_LED, RGB_MAX_INTENSITY);
 		stop_robot();
-		toggle_led2();
-		toggle_led4();
-		toggle_led6();
-		toggle_led8();
 	}
-	//chThdSleepMilliseconds(1000);
-	//set_body_led(OFF);
-	set_rgb_led(LED2, OFF, OFF, OFF);
+	clear_rgb_led();
 	set_robot_state(CRUISE_STATE);
 }
 

@@ -9,6 +9,8 @@ void turn_90_right(void);
 void stop_robot(void);
 void backtracking(void);
 
+void clear_rgb_led(void);
+
 void move_forward(void);
 void wall_bypassing(void);
 void angle_right_bypassing(void);
@@ -19,10 +21,8 @@ void steep_slope_warning(void);
 
 
 //rajouter les conditions dans les fonctions pour détecter constement si la pente est trop grande
-//remettre au propre le makefile
 //tout commenter et tout cleaner
 //créer un troisième fichier pour la pente seulement
-//créer liste pour éviter les copier collé sur les fonctions qui sont eactement les memes
 
 
 

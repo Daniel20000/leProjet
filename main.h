@@ -1,3 +1,12 @@
+/*
+File : main.h
+Author : Daniel Finell & Benoît Gallois
+Date : 6 may 2022
+
+Initializes the devices we use and the threads
+*/
+
+
 #ifndef MAIN_H
 #define MAIN_H
 
@@ -5,10 +14,11 @@
 extern "C" {
 #endif
 
-#include "camera/dcmi_camera.h"
+#include "camera/dcmi_camera.h"		//a laisser ou pas?
 #include "msgbus/messagebus.h"
 #include "parameter/parameter.h"
 
+/* Defines the different states constants for the robot control switch. */
 #define CRUISE_STATE					0
 #define BYPASS_OBSTACLE_WALL			1
 #define BYPASS_OBSTACLE_ANGLE_RIGHT		2
@@ -16,8 +26,9 @@ extern "C" {
 #define BYPASS_U_TURN					4
 #define CAUTION_STEEP_SLOPE				5
 
-void set_robot_state(uint8_t new_state);
 
+/*Definition of the "setter". */
+void set_robot_state(uint8_t new_state);
 
 
 /** Robot wide IPC bus. */

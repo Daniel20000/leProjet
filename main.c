@@ -2,8 +2,7 @@
 File : main.c
 Author : Daniel Finell & Benoît Gallois
 Date : 6 may 2022
-
-Initializes the devices we use and the threads
+Initializes the devices we use and the threads.
 */
 
 
@@ -22,6 +21,7 @@ Initializes the devices we use and the threads
 #include <sensors/proximity.h>
 
 #include <detect_obstacle.h>
+#include <steep_slope.h>
 
 
 /* Declaration of a global variable, and implementation of a "set" to give access to state_of_robot in other files. */
@@ -97,9 +97,6 @@ int main(void)
     		case BYPASS_U_TURN:
     			u_turn_bypassing();
     			break;
-    		case CAUTION_STEEP_SLOPE:
-    			steep_slope_warning();
-    			break;
     	}
         chThdSleepMilliseconds(200); 				//Waits 0,2 second.
     }
@@ -113,4 +110,3 @@ void __stack_chk_fail(void)
 {
     chSysHalt("Stack smashing detected");
 }
-

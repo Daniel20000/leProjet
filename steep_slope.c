@@ -25,6 +25,8 @@ Definition of function if a steep slope is detected.
 #define X						get_acc(0)
 #define Y						get_acc(1)
 
+/* Defines the threshold for the IMU. */
+#define SLOPE_THRESHOLD			6000
 
 /*
  * Definition of the functions to set or clear the LED and RGB_LED in the same time.

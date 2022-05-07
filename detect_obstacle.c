@@ -40,7 +40,7 @@ Definition of the functions that they control the robot.
 
 /* Defines the thresholds for the IR SENSORS. */
 #define PROX_THRESHOLD			100
-#define PROX_THRESHOLD_45		110
+#define PROX_THRESHOLD_45		120
 #define PROX_THRESHOLD_90		90
 #define PROX_THRESHOLD_BACK		65
 
@@ -93,8 +93,8 @@ void backtracking(void){
 /* Main thread. */
 void move_forward(void){
 	go_straight_on();
-	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 <= PROX_THRESHOLD_45)
-			&& (IR7 <= PROX_THRESHOLD_45) && (IR3 <= PROX_THRESHOLD_90) && (IR6 <= PROX_THRESHOLD_90)){		//check if there is an obstacle ONLY in front it.
+	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 <= PROX_THRESHOLD_90)
+			&& (IR7 <= PROX_THRESHOLD_90) && (IR3 <= PROX_THRESHOLD_90) && (IR6 <= PROX_THRESHOLD_90)){		//check if there is an obstacle ONLY in front it.
 		set_led(LED1, ON);																					//set the led where the obstacle is.
 		set_robot_state(BYPASS_OBSTACLE_WALL);																//switch thread in the main.
 	}
@@ -113,8 +113,8 @@ void move_forward(void){
 			set_robot_state(BYPASS_OBSTACLE_ANGLE_LEFT);
 		}
 
-	if(((IR1 >= PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD)) && (IR2 >= PROX_THRESHOLD)						//check if there is an obstacle in front
-			&& (IR7 >= PROX_THRESHOLD) && (IR3 >= PROX_THRESHOLD_90) && (IR6 >= PROX_THRESHOLD_90)){		//and on both sides.
+	if(((IR1 >= PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD)) && (IR2 >= PROX_THRESHOLD_90)						//check if there is an obstacle in front
+			&& (IR7 >= PROX_THRESHOLD_90) && (IR3 >= PROX_THRESHOLD_90) && (IR6 >= PROX_THRESHOLD_90)){		//and on both sides.
 		set_led(LED1,ON);
 		set_led(LED3,ON);
 		set_led(LED7,ON);

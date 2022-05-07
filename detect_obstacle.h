@@ -14,10 +14,6 @@ Declarations of the functions that control the robot.
 #define ON						1
 
 
-/* Defines the threshold for the IMU. */
-#define SLOPE_THRESHOLD			5750
-
-
 /* Declaration of the MOTORS control functions . */
 void go_straight_on(void);
 void turn_90_left(void);

@@ -5,7 +5,6 @@ Date : 6 may 2022
 Definition of the functions that they control the robot.
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,12 +12,11 @@ Definition of the functions that they control the robot.
 
 #include "ch.h"
 #include "hal.h"
-#include <main.h>
 #include <motors.h>
 #include <leds.h>
 #include <sensors/proximity.h>
-#include <sensors/imu.h>
 
+#include <main.h>
 #include <detect_obstacle.h>
 #include <steep_slope.h>
 
@@ -27,6 +25,29 @@ Definition of the functions that they control the robot.
 #define CRUISING_SPEED          300
 #define STOP_SPEED              0
 #define TURN_SPEED			    600
+
+
+/* Defines the IR sensors name. */
+#define IR1         		 	get_prox(0)
+#define IR2           			get_prox(1)
+#define IR3			   			get_prox(2)
+#define IR4         		 	get_prox(3)
+#define IR5           			get_prox(4)
+#define IR6			   			get_prox(5)
+#define IR7         		 	get_prox(6)
+#define IR8           			get_prox(7)
+
+
+/* Defines the thresholds for the IR SENSORS. */
+#define PROX_THRESHOLD			100
+#define PROX_THRESHOLD_45		110
+#define PROX_THRESHOLD_90		90
+#define PROX_THRESHOLD_BACK		65
+
+
+/* Defines the time constants.*/
+#define TIME_TO_TURN			1075
+#define TIME_MARGIN				250
 
 
 /*
@@ -69,30 +90,31 @@ void backtracking(void){
  * Definition of the different threads.
  */
 
+/* Main thread. */
 void move_forward(void){
 	go_straight_on();
-	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 <= 90)
-			&& (IR7 <= 90) && (IR3 <= 90) && (IR6 <= 90)){
-		set_led(LED1, ON);
-		set_robot_state(BYPASS_OBSTACLE_WALL);
+	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 <= PROX_THRESHOLD_45)
+			&& (IR7 <= PROX_THRESHOLD_45) && (IR3 <= PROX_THRESHOLD_90) && (IR6 <= PROX_THRESHOLD_90)){		//check if there is an obstacle ONLY in front it.
+		set_led(LED1, ON);																					//set the led where the obstacle is.
+		set_robot_state(BYPASS_OBSTACLE_WALL);																//switch thread in the main.
 	}
 
-	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 >= 120)
-			&& (IR7 <= 120) && (IR3 >= 100) && (IR6 <= 100)){
+	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 >= PROX_THRESHOLD_45)					//check if there is an obstacle in front
+			&& (IR7 <= PROX_THRESHOLD_45) && (IR3 >= PROX_THRESHOLD_90) && (IR6 <= PROX_THRESHOLD_90)){		//and on the right.
 		set_led(LED1, ON);
 		set_led(LED3, ON);
 		set_robot_state(BYPASS_OBSTACLE_ANGLE_RIGHT);
 	}
 
-	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 <= 90)
-			&& (IR7 >= 90) && (IR3 <= 90) && (IR6 >= 90)){
+	if(((IR1 >= PROX_THRESHOLD) || (IR8 >= PROX_THRESHOLD)) && (IR2 <= PROX_THRESHOLD_45)					//check if there is an obstacle in front
+			&& (IR7 >= PROX_THRESHOLD_45) && (IR3 <= PROX_THRESHOLD_90) && (IR6 >= PROX_THRESHOLD_90)){		//and on the left.
 			set_led(LED1, ON);
 			set_led(LED7, ON);
 			set_robot_state(BYPASS_OBSTACLE_ANGLE_LEFT);
 		}
 
-	if(((IR1 >= PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD)) && (IR2 >= 90)
-			&& (IR7 >= 90) && (IR3 >= 90) && (IR6 >= 90)){
+	if(((IR1 >= PROX_THRESHOLD) && (IR8 >= PROX_THRESHOLD)) && (IR2 >= PROX_THRESHOLD)						//check if there is an obstacle in front
+			&& (IR7 >= PROX_THRESHOLD) && (IR3 >= PROX_THRESHOLD_90) && (IR6 >= PROX_THRESHOLD_90)){		//and on both sides.
 		set_led(LED1,ON);
 		set_led(LED3,ON);
 		set_led(LED7,ON);
@@ -100,25 +122,23 @@ void move_forward(void){
 	}
 }
 
-
-
-void wall_bypassing(void){
+void wall_bypassing(void){								//When detect obstacle, turn on the right and the go straight forward while IR6 detect the wall.
 	turn_90_right();
 	clear_leds();
-	while(IR6 >= PROX_THRESHOLD){
+	while(IR6 >= PROX_THRESHOLD_90){
 		go_straight_on();
-	}
-	chThdSleepMilliseconds(TIME_MARGIN);
+	}													//If IR6 does not detect the wall then turn left and return to the main thread.
+	chThdSleepMilliseconds(TIME_MARGIN);				//TIME_MARGIN prevents the robot from turning too quickly after the wall and colliding.
 	turn_90_left();
-	go_straight_on();							//potentiellement à enlever
+	go_straight_on();
 	set_robot_state(CRUISE_STATE);
 }
 
-void angle_right_bypassing(void){
+void angle_right_bypassing(void){						//When detect obstacle, turn on the left and the go straight forward while IR3 detect the wall.
 	turn_90_left();
 	clear_leds();
 	go_straight_on();
-	while(IR3 >= 100){
+	while(IR3 >= PROX_THRESHOLD_90){
 		go_straight_on();
 	}
 	chThdSleepMilliseconds(TIME_MARGIN);
@@ -127,11 +147,11 @@ void angle_right_bypassing(void){
 	set_robot_state(CRUISE_STATE);
 }
 
-void angle_left_bypassing(void){
+void angle_left_bypassing(void){						//When detect obstacle, turn on the right and the go straight forward while IR6 detect the wall.
 	turn_90_right();
 	clear_leds();
 	go_straight_on();
-	while(IR6 >= 100){
+	while(IR6 >= PROX_THRESHOLD_90){
 		go_straight_on();
 	}
 	chThdSleepMilliseconds(TIME_MARGIN);
@@ -140,8 +160,8 @@ void angle_left_bypassing(void){
 	set_robot_state(CRUISE_STATE);
 }
 
-void u_turn_bypassing(void){
-	while((IR2 >= 63) && (IR7 >= 63)){
+void u_turn_bypassing(void){							//When detect obstacle, backtracking until the robot can turn on the left.
+	while((IR2 >= PROX_THRESHOLD_BACK) && (IR7 >= PROX_THRESHOLD_BACK)){
 		clear_leds();
 		set_front_led(ON);
 		backtracking();
@@ -151,11 +171,3 @@ void u_turn_bypassing(void){
 	go_straight_on();
 	set_robot_state(CRUISE_STATE);
 }
-
-
-
-
-
-
-
-

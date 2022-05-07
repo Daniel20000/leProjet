@@ -5,15 +5,10 @@ Date : 6 may 2022
 Initializes the devices we use and the threads.
 */
 
-
 #ifndef MAIN_H
 #define MAIN_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "camera/dcmi_camera.h"		//a laisser ou pas?
+#include "camera/dcmi_camera.h"				//A LAISSER OU PAS?
 #include "msgbus/messagebus.h"
 #include "parameter/parameter.h"
 
@@ -35,9 +30,5 @@ extern messagebus_t bus;
 extern parameter_namespace_t parameter_root;
 
 void SendUint8ToComputer(uint8_t* data, uint16_t size);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

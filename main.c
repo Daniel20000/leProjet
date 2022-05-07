@@ -5,7 +5,6 @@ Date : 6 may 2022
 Initializes the devices we use and the threads.
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,12 +13,12 @@ Initializes the devices we use and the threads.
 #include "ch.h"
 #include "hal.h"
 #include "spi_comm.h"
-#include <main.h>
 #include <motors.h>
 #include <leds.h>
 #include <sensors/imu.h>
 #include <sensors/proximity.h>
 
+#include <main.h>
 #include <detect_obstacle.h>
 #include <steep_slope.h>
 
@@ -30,6 +29,7 @@ static uint8_t state_of_robot = 0;
 void set_robot_state(uint8_t new_state){
 	state_of_robot = new_state;
 }
+
 
 /* Initialization of the bus for sensors. */
 messagebus_t bus;

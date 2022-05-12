@@ -1,18 +1,11 @@
 /*
 File : main.c
 Author : Daniel Finell & Benoît Gallois
-Date : 6 may 2022
+Date : 12 may 2022
 Initializes the devices we use and the threads.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-
-#include "ch.h"
-#include "hal.h"
-#include "spi_comm.h"
+#include <spi_comm.h>
 #include <motors.h>
 #include <leds.h>
 #include <sensors/imu.h>
@@ -57,14 +50,15 @@ int main(void)
     calibrate_acc();
 
 
-    /* Initialization RGB_LED. */
+    /* Initialization for RGB_LED. */
     spi_comm_start();
 
 
     /* Initialization MOTORS. */
 	motors_init();
 
-	chThdSleepMilliseconds(2000); 					//Waits 2 seconds.
+
+	chThdSleepMilliseconds(2000); 					// Waits 2 seconds to complete all the initializations and calibrations.
 
     /* Infinite loop. */
     while (1) {
@@ -72,23 +66,23 @@ int main(void)
     	/* Declarations of the different threads for the robot control. */
     	switch(state_of_robot){
     		case CRUISE_STATE:
-    			move_forward();						//Basic Thread
+    			move_forward();						// Basic Thread
+    			break;
+    		case BYPASS_U_TURN:
+    		    u_turn_bypassing();					// If the robot detects that it is entering a dead end, it calls a thread to get out.
     			break;
     		case BYPASS_OBSTACLE_WALL:
-    			wall_bypassing();
+    			wall_bypassing();					// If the robot detects a front obstacle, it turns right to avoid it.
     			break;
     		case BYPASS_OBSTACLE_ANGLE_RIGHT:
-    		    angle_right_bypassing();
+    		    angle_right_bypassing();			// If the robot detects an obstacle at 90° to its right, it goes around it.
     		    break;
     		case BYPASS_OBSTACLE_ANGLE_LEFT:
-    		    angle_left_bypassing();
+    		    angle_left_bypassing();				// If the robot detects an obstacle at 90° to its left, it goes around it.
     		    break;
-    		case BYPASS_U_TURN:
-    			u_turn_bypassing();
-    			break;
     	}
 
-        chThdSleepMilliseconds(100); 				//Waits 0,2 second.
+        chThdSleepMilliseconds(100); 				// Waits 0,1 second.
     }
 }
 

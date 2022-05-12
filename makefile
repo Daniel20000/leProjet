@@ -10,7 +10,6 @@ CSRC += ./main.c \
 		./detect_obstacle.c \
 		./steep_slope.c \
 
-
 #Header folders to include
 INCDIR += 
 

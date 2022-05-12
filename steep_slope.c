@@ -25,8 +25,8 @@ Definition of function if a steep slope is detected.
 #define X						get_acc(0)
 #define Y						get_acc(1)
 
-/* Defines the threshold for the IMU. */
-#define SLOPE_THRESHOLD			6000
+/* Defines the threshold for the ACC IMU. */
+#define SLOPE_THRESHOLD			6500
 
 /*
  * Definition of the functions to set or clear the LED and RGB_LED in the same time.
@@ -41,9 +41,9 @@ void set_all_rgb_led(uint8_t red_val, uint8_t green_val, uint8_t blue_val) {
 
 void clear_all_rgb_led(void){
 	led_name_t led_list[4] = { LED2, LED4, LED6, LED8 };
-		for(int i = 0 ; i <= 3 ; i = i + 1){
-			set_rgb_led(led_list[i], OFF, OFF, OFF);
-		}
+	for(int i = 0 ; i <= 3 ; i = i + 1){
+		set_rgb_led(led_list[i], OFF, OFF, OFF);
+	}
 }
 
 void set_all_led(uint8_t value) {
@@ -79,5 +79,4 @@ void steep_slope_warning(void){
 		set_body_led(OFF);
 	}
 	clear_all_rgb_led();
-	set_robot_state(CRUISE_STATE);
 }

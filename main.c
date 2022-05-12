@@ -37,25 +37,13 @@ MUTEX_DECL(bus_lock);
 CONDVAR_DECL(bus_condvar);
 
 
-/*
- * QUOI????
- */
-void SendUint8ToComputer(uint8_t* data, uint16_t size) 
-{
-	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)"START", 5);
-	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)&size, sizeof(uint16_t));
-	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)data, size);
-}
-
-
 int main(void)
 {
-	/*
-	 * QUOI???
-	 */
+	/* System init */
     halInit();
     chSysInit();
 
+    /* Inits the Inter Process Communication bus. */
     messagebus_init(&bus, &bus_lock, &bus_condvar);
 
 
@@ -76,14 +64,15 @@ int main(void)
     /* Initialization MOTORS. */
 	motors_init();
 
+	chThdSleepMilliseconds(2000); 					//Waits 2 seconds.
 
     /* Infinite loop. */
     while (1) {
 
     	/* Declarations of the different threads for the robot control. */
     	switch(state_of_robot){
-    		case CRUISE_STATE:						//Basic Thread.
-    			move_forward();
+    		case CRUISE_STATE:
+    			move_forward();						//Basic Thread
     			break;
     		case BYPASS_OBSTACLE_WALL:
     			wall_bypassing();
@@ -98,7 +87,8 @@ int main(void)
     			u_turn_bypassing();
     			break;
     	}
-        chThdSleepMilliseconds(200); 				//Waits 0,2 second.
+
+        chThdSleepMilliseconds(100); 				//Waits 0,2 second.
     }
 }
 

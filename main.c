@@ -2,10 +2,8 @@
 File : main.c
 Author : Daniel Finell & Benoît Gallois
 Date : 6 may 2022
-
-Initializes the devices we use and the threads
+Initializes the devices we use and the threads.
 */
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,13 +13,14 @@ Initializes the devices we use and the threads
 #include "ch.h"
 #include "hal.h"
 #include "spi_comm.h"
-#include <main.h>
 #include <motors.h>
 #include <leds.h>
 #include <sensors/imu.h>
 #include <sensors/proximity.h>
 
+#include <main.h>
 #include <detect_obstacle.h>
+#include <steep_slope.h>
 
 
 /* Declaration of a global variable, and implementation of a "set" to give access to state_of_robot in other files. */
@@ -31,31 +30,20 @@ void set_robot_state(uint8_t new_state){
 	state_of_robot = new_state;
 }
 
+
 /* Initialization of the bus for sensors. */
 messagebus_t bus;
 MUTEX_DECL(bus_lock);
 CONDVAR_DECL(bus_condvar);
 
 
-/*
- * QUOI????
- */
-void SendUint8ToComputer(uint8_t* data, uint16_t size) 
-{
-	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)"START", 5);
-	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)&size, sizeof(uint16_t));
-	chSequentialStreamWrite((BaseSequentialStream *)&SD3, (uint8_t*)data, size);
-}
-
-
 int main(void)
 {
-	/*
-	 * QUOI???
-	 */
+	/* System init */
     halInit();
     chSysInit();
 
+    /* Inits the Inter Process Communication bus. */
     messagebus_init(&bus, &bus_lock, &bus_condvar);
 
 
@@ -76,14 +64,15 @@ int main(void)
     /* Initialization MOTORS. */
 	motors_init();
 
+	chThdSleepMilliseconds(2000); 					//Waits 2 seconds.
 
     /* Infinite loop. */
     while (1) {
 
     	/* Declarations of the different threads for the robot control. */
     	switch(state_of_robot){
-    		case CRUISE_STATE:						//Basic Thread.
-    			move_forward();
+    		case CRUISE_STATE:
+    			move_forward();						//Basic Thread
     			break;
     		case BYPASS_OBSTACLE_WALL:
     			wall_bypassing();
@@ -97,11 +86,9 @@ int main(void)
     		case BYPASS_U_TURN:
     			u_turn_bypassing();
     			break;
-    		case CAUTION_STEEP_SLOPE:
-    			steep_slope_warning();
-    			break;
     	}
-        chThdSleepMilliseconds(200); 				//Waits 0,2 second.
+
+        chThdSleepMilliseconds(100); 				//Waits 0,2 second.
     }
 }
 
@@ -113,4 +100,3 @@ void __stack_chk_fail(void)
 {
     chSysHalt("Stack smashing detected");
 }
-

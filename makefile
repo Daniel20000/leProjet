@@ -1,9 +1,6 @@
 
-#This is a template to build your own project with the e-puck2_main-processor folder as a library.
-#Simply adapt the lines below to be able to compile
-
 # Define project name here
-PROJECT = CamReg
+PROJECT = Project_Finell_Gallois
 
 #Define path to the e-puck2_main-processor folder
 GLOBAL_PATH = ../../lib/e-puck2_main-processor
@@ -11,7 +8,7 @@ GLOBAL_PATH = ../../lib/e-puck2_main-processor
 #Source files to include
 CSRC += ./main.c \
 		./detect_obstacle.c \
-
+		./steep_slope.c \
 
 #Header folders to include
 INCDIR += 

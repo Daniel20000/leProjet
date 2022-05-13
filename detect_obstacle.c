@@ -17,16 +17,16 @@ Definition of the functions that they control the robot.
 /* Defines the speeds for the motors. */
 #define CRUISING_SPEED          300
 #define STOP_SPEED              0
-#define TURN_SPEED			    600
+#define TURN_SPEED				600
 
 
 /* Defines the IR sensors name. */
 #define IR1         		 	get_prox(0)
 #define IR2           			get_prox(1)
-#define IR3			   			get_prox(2)
+#define IR3						get_prox(2)
 #define IR4         		 	get_prox(3)
 #define IR5           			get_prox(4)
-#define IR6			   			get_prox(5)
+#define IR6						get_prox(5)
 #define IR7         		 	get_prox(6)
 #define IR8           			get_prox(7)
 
@@ -92,7 +92,7 @@ void move_forward(void){
 		set_led(LED1,ON);
 		set_led(LED3,ON);
 		set_led(LED7,ON);
-			set_robot_state(BYPASS_U_TURN);																	// Call the function to avoid it.
+		set_robot_state(BYPASS_U_TURN);																	// Call the function to avoid it.
 	}
 
 	if(((IR1 >= PROX_THRESHOLD_1) || (IR8 >= PROX_THRESHOLD_1)) && (IR2 <= PROX_THRESHOLD_3)				// Check if there is an obstacle ONLY in front it.

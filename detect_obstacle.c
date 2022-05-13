@@ -48,7 +48,7 @@ Definition of the functions that they control the robot.
  */
 
 void go_straight_on(void){
-	right_motor_set_speed(CRUISING_SPEED);
+	right_motor_set_speed(CRUISING_SPEED);						// Set the motors.
 	left_motor_set_speed(CRUISING_SPEED);
 	check_slope();												// Check if the slope is not too steep.
 }

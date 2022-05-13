@@ -54,14 +54,14 @@ void set_all_led(uint8_t value) {
 void check_slope(void){
 	if(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){		/* Check the inclination of the two axis
 																										   that can make the robot fall. */
-		steep_slope_warning();																			//Call the warning function.
+		steep_slope_warning();																			// Call the warning function.
 	}
 }
 
 void steep_slope_warning(void){
 	stop_robot();
-	while(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){	//Toggle the led to warn the user.
-		set_all_rgb_led(OFF, OFF, RGB_MAX_INTENSITY);
+	while(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){
+		set_all_rgb_led(OFF, OFF, RGB_MAX_INTENSITY);													// Toggle the led to warn the user.
 		chThdSleepMilliseconds(500);
 		clear_all_rgb_led();
 		set_all_led(ON);

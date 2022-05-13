@@ -1,17 +1,10 @@
 /*
 File : steep_slope.c
 Author : Daniel Finell & Benoît Gallois
-Date : 6 may 2022
+Date : 12 may 2022
 Definition of function if a steep slope is detected.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-
-#include "ch.h"
-#include "hal.h"
 #include <motors.h>
 #include <leds.h>
 #include <sensors/imu.h>
@@ -60,15 +53,15 @@ void set_all_led(uint8_t value) {
 
 void check_slope(void){
 	if(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){		/* Check the inclination of the two axis
-																										that can make the robot fall. */
-		steep_slope_warning();																			//Call the warning function.
+																										   that can make the robot fall. */
+		steep_slope_warning();																			// Call the warning function.
 	}
 }
 
 void steep_slope_warning(void){
 	stop_robot();
-	while(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){	//Set of led to warn the user.
-		set_all_rgb_led(OFF, OFF, RGB_MAX_INTENSITY);
+	while(X > SLOPE_THRESHOLD || X < -SLOPE_THRESHOLD || Y > SLOPE_THRESHOLD || Y < -SLOPE_THRESHOLD){
+		set_all_rgb_led(OFF, OFF, RGB_MAX_INTENSITY);													// Toggle the led to warn the user.
 		chThdSleepMilliseconds(500);
 		clear_all_rgb_led();
 		set_all_led(ON);

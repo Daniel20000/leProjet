@@ -25,7 +25,7 @@ void backtracking(void);
 /* Declaration of the different threads. */
 
 /**
- * @brief   The robot go ahead.
+ * @brief   The robot goes ahead.
  * 			And check if there is an obstacle (dead end, wall in front, 90° wall on right/left).
  */
 void move_forward(void);

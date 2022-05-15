@@ -66,7 +66,7 @@ int main(void)
     	/* Declarations of the different threads for the robot control. */
     	switch(state_of_robot){
     		case CRUISE_STATE:
-    			move_forward();						// Basic Thread
+    			move_forward();						// Basic State.
     			break;
     		case BYPASS_U_TURN:
     		    u_turn_bypassing();					// If the robot detects that it is entering a dead end, it calls a thread to get out.
